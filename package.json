@@ -1,5 +1,5 @@
 {
-  "name": "plugin-samples",
+  "name": "figma-upload-img",
   "version": "1.0.0",
   "description": "figma 一键下载图片",
   "scripts": {
