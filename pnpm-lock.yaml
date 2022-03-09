@@ -1,0 +1,13 @@
+lockfileVersion: 5.3
+
+specifiers:
+  '@figma/plugin-typings': ^1.34.1
+
+devDependencies:
+  '@figma/plugin-typings': 1.42.1
+
+packages:
+
+  /@figma/plugin-typings/1.42.1:
+    resolution: {integrity: sha512-TQy81xtgcNWhu2uSiOZIxzGOC8Y/9rcP04GLp2f5MGg/LOH5BPNIkc8mRYPqInwcgQTnvxDpirr8MpYQPYRwDQ==}
+    dev: true

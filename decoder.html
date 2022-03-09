@@ -1,0 +1,84 @@
+<script src="https://cdn.bootcdn.net/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+<script>
+  // Encoding an image is also done by sticking pixels in an
+  // HTML canvas and by asking the canvas to serialize it into
+  // an actual PNG file via canvas.toBlob()
+  async function encode(canvas, ctx, imageData) {
+    ctx.putImageData(imageData, 0, 0)
+
+    return await new Promise((resolve, reject) => {
+      canvas.toBlob(blob => {
+        const reader = new FileReader()
+        reader.onload = () => resolve(new Uint8Array(reader.result))
+        reader.onerror = () => reject(new Error('Could not read from blob'))
+        reader.readAsArrayBuffer(blob)
+      })
+    })
+  }
+
+  // Decoding an image can be done by sticking it in an HTML canvas,
+  // since we can read individual pixels off the canvas.
+  async function decode(canvas, ctx, bytes) {
+    // console.log(bytes)
+    const url = URL.createObjectURL(new Blob([bytes]))
+    const image = await new Promise((resolve, reject) => {
+      const img = new Image()
+      img.onload = () => resolve(img)
+      img.onerror = () => reject()
+      img.src = url
+    })
+
+    // var dh = image.width/750
+    var rate = image.width / image.height;
+
+    canvas.width = image.width;
+    canvas.height = image.height;
+    ctx.drawImage(image, 0, 0, image.width, image.height)
+    const imageData = ctx.getImageData(0, 0, 750, 750 / rate)
+    return imageData
+  }
+
+  // Create an event handler to receive messages from the main thread
+  window.onmessage = async (event) => {
+    // Just get the bytes directly from the pluginMessage since that's
+    // the only type of message we'll receive in this plugin. In more
+    // complex plugins, you'll want to check the type of the message.
+    const bytesList = event.data.pluginMessage
+    // console.log(bytesList)
+    // return;
+    const canvas = document.createElement('canvas')
+    // canvas.width = '750'
+    const ctx = canvas.getContext('2d')
+    var zip = new JSZip();
+    // var img = zip.folder("images");
+    for (let i = 0; i < bytesList.length; i++) {
+
+      let bytes = bytesList[i].data;
+      const imageData = await decode(canvas, ctx, bytes)
+
+      ctx.putImageData(imageData, 0, 0)
+      let url = canvas.toDataURL("image/png"); //得到图片的base64编码数据
+
+      // console.log(url)
+      zip.file(`${bytesList[i].name}.png`, url.replace('data:image/png;base64,', ''), {
+        base64: true
+      });
+    }
+
+
+    zip.generateAsync({
+      type: "blob"
+    }).then(function (content) {
+      // see FileSaver.js
+      // saveAs(content, "example.zip");
+      // console.log(1)
+      let a = document.createElement("a"); // 生成一个a元素
+      let event1 = new MouseEvent("click"); // 创建一个单击事件
+      a.download = "example.zip"; // 设置图片名称
+      a.href = URL.createObjectURL(content); // 将生成的URL设置为a.href属性
+      a.dispatchEvent(event1); // 触发a的单击事件
+    });
+
+
+  }
+</script>
