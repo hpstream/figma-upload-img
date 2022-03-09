@@ -1,7 +1,7 @@
 {
   "name": "plugin-samples",
   "version": "1.0.0",
-  "description": "Sample plugins using the [Figma Plugin API][docs].",
+  "description": "figma 一键下载图片",
   "scripts": {
     "check": "for i in */tsconfig.json; do echo $i; (cd $(dirname $i) && tsc); done",
     "test": "echo \"Error: no test specified\" && exit 1"
