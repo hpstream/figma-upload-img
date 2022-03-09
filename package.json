@@ -1,6 +1,6 @@
 {
   "name": "figma-upload-img",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "figma 一键下载图片",
   "scripts": {
     "check": "for i in */tsconfig.json; do echo $i; (cd $(dirname $i) && tsc); done",
